@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 
 using namespace std;
 
@@ -24,9 +24,9 @@ void main() {
 		*/
 		(arr[i] % 2 ? odd_count : even_count)++;
 	}
-	cout << "Êîëè÷åñòâî ÷åòíûõ ýëåìåíòîâ: " << even_count << endl;
+	cout << "ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ñ‡ÐµÑ‚Ð½Ñ‹Ñ… ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²: " << even_count << endl;
 
-	cout << "Êîëè÷åñòâî íå÷åòíûõ ýëåìåíòîâ: " << odd_count << endl;
+	cout << "ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð½ÐµÑ‡ÐµÑ‚Ð½Ñ‹Ñ… ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²: " << odd_count << endl;
 
 	int* even_arr = new int[even_count];
 	int* odd_arr = new int[odd_count];
