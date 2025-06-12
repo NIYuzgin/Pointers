@@ -3,38 +3,64 @@
 using namespace std;
 
 void FillRand(int arr[], const int n);
-
-void FillRand(int** arr, const int rows, const int cols, int minRand=0, int maxRand=100);
-
-
 void Print(int arr[], const int n);
 
-void Print(int** arr, const int rows, const int cols);
+int* push_back(int arr[], int& n, const int value);
+int* push_front(int arr[], int& n, const int value);
+
+int* pop_back(int arr[], int& n);
+int* pop_front(int arr[], int& n);
+
+int* InsertElement(int* arr, int* size, int index, int element);
+int* EraseElement(int* arr, int* size, int index);
+
+/*
+
+//void FillRand(int** arr, const int rows, const int cols, int minRand=0, int maxRand=100);
+
+//void Print(int** arr, const int rows, const int cols);
 
 //void FillRand(int arr[], const int n, int minRand = 0, int maxRand = 100);
 
 
-int* InsertElement(int* arr, int* size, int index, int element);
-int* EraseElement(int* arr, int* size, int index);
+
 
 
 int** push_row_back (int** arr, int& rows, const int cols);
 
 void push_col_back(int** arr, const int rows, int& cols);
 //#define 
-
+*/
 
 
 void main() {
 	setlocale(LC_ALL, "");
-	/*
+	
 	int n;
 	cout << "Введите размер массива: "; cin >> n; 
 	int* arr = new int[n]; // объявление динамического массива
 	
 	FillRand(arr, n);
 	Print(arr, n);
+	
+	int value;
+	cout << "Введите добавляемое значение: "; cin >> value;
 
+	arr = push_back(arr, n, value);
+	Print(arr, n);
+
+	cout << "Введите добавляемое значение: "; cin >> value;
+
+	arr = push_front(arr, n, value);
+	Print(arr, n);
+
+	arr = pop_back(arr, n);
+	Print(arr, n);
+
+	arr = pop_front(arr, n);
+	Print(arr, n);
+
+	
 	cout << endl << endl << "Функция вставки элемента по указанному индексу" << endl;
 	cout << "----------------" << endl;
 	int element;
@@ -66,8 +92,11 @@ void main() {
 	Print(arr, n);
 
 	delete[] arr;
-	*/
+	
 
+	
+	/*
+	
 	int rows;
 	int cols;
 
@@ -83,6 +112,9 @@ for (int i = 0; i < rows; i++) {
 
 			}
 	
+*/
+
+
 /*
 for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++) {
@@ -95,6 +127,9 @@ for (int i = 0; i < rows; i++) {
 	}
 */
 	
+	/*
+
+
 FillRand(arr, rows, cols);
 
 Print(arr, rows, cols);
@@ -121,6 +156,11 @@ Print(arr, rows, cols);
 
 		delete[] arr[i];
 	}
+	
+	
+	*/
+	
+
 	delete[] arr;
 	}
 
@@ -130,56 +170,86 @@ void FillRand(int arr[], const int n) {
 		}
 }
 
-void FillRand(int** arr, const int rows, const int cols, int minRand, int maxRand)
-{
-
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < cols; j++) {
-
-
-			arr[i][j] = rand() % (maxRand - minRand) + minRand;
-		}
-
-
-	}
-
-
-
-
-
-
-
-
-}
-
 void Print(int arr[], const int n) {
-	//cout << arr << endl;
-	//cout << *arr << endl;
+	cout << arr << endl;
+	cout << *arr << endl;
 
 	for (int i = 0; i < n; i++) {
 		cout << arr[i] << "\t"; // через оператор индексирования (Subscript operator)
 	}
-	//cout << endl;
+	cout << endl;
 }
 
-void Print(int** arr, const int rows, const int cols)
-{
+int* push_back(int arr[], int& n, const int value) {
+	
+	// 1) Создаем буферный массив нужного размера:
+	int* buffer = new int[n + 1];
 
-for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < cols; j++) {
-			cout<< arr[i][j] << "\t";
-		}
-		cout << endl;
-
+	// 2) Копируем все элементы из исходного массива в буферный:
+	for (int i = 0; i < n; i++) {
+		buffer[i] = arr[i];
 	}
 
+	// 3) Удаляем исходный массив:
+	delete[] arr;
 
+	// 4) Подменяем адрес исходного массива адресом нового массива:
+	arr = buffer;
+	// buffer = nullptr; // nullptr - указатель на 0;
 
+	// 5) Только после всего вышенаписанного в массиве 'arr' появляется элемент,
+	//    в который можно сохранить добавляемое значение.
+	arr[n] = value;
+
+	// 6) после добавления элемента в массив, количество его элементов увеличивается на 1;
+	n++;
+
+	// 7) Mission complete - значение добавлено.
+	
+	return buffer;
+}
+
+int* push_front(int arr[], int& n, const int value) {
+	
+	// 1) Создаем буферный массив нужного размера:
+	int* buffer = new int[n + 1];
+
+	// 2) Копируем все элементы из исходного массива в буферный:
+	for (int i = 0; i < n; i++) {
+		buffer[i+1] = arr[i];
+	}
+
+	// 3) Удаляем исходный массив:
+	delete[] arr;
+
+	// 4) 
+	buffer[0] = value;
+
+	// 5) 
+	n++;
+	
+	return buffer;
+	
+}
+
+int* pop_back(int arr[], int& n) {
+	int* buffer = new int[--n];
+	for (int i = 0; i < n; i++)buffer[i] = arr[i];
+	delete[] arr;
+	return buffer;
+}
+
+int* pop_front(int arr[], int& n) {
+	int* buffer = new int[--n];
+	for (int i = 0; i < n; i++)buffer[i] = arr[i+1];
+	delete[] arr;
+	return buffer;
+	
 }
 
 int* InsertElement(int* arr, int* size, int index, int element)
 {
-	
+
 	int new_size = *size + 1;
 	int* temp = new int[new_size];
 	for (int i = 0; i < index; i++) {
@@ -203,8 +273,44 @@ int* EraseElement(int* arr, int* size, int index) {
 	}
 	*size = new_size;
 	return temp;
-	
+
 }
+
+/*
+
+void FillRand(int** arr, const int rows, const int cols, int minRand, int maxRand)
+{
+
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+
+
+			arr[i][j] = rand() % (maxRand - minRand) + minRand;
+		}
+
+
+	}
+
+}
+
+
+
+void Print(int** arr, const int rows, const int cols)
+{
+
+for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			cout<< arr[i][j] << "\t";
+		}
+		cout << endl;
+
+	}
+
+
+
+}
+
+
 
 int** push_row_back(int** arr, int& rows, const int cols)
 {
@@ -246,7 +352,7 @@ void push_col_back(int** arr, const int rows, int& cols)
 	cols++;
 }
 
-
+*/
 
 
 
