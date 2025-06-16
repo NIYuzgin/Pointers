@@ -32,6 +32,7 @@ template <typename T>void push_col_back(T** arr, const int rows, int& cols);
 int* InsertElement(int* arr, int* size, int index, int element);
 int* EraseElement(int* arr, int* size, int index);
 
+//TO DO: Optimization
 
 
 //#define DYNAMIC_MEMORY_1
