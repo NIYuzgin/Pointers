@@ -23,13 +23,27 @@ int* pop_back(int arr[], int& n);
 int* pop_front(int arr[], int& n);
 
 int** push_row_back(int** arr, int& rows, const int cols);
+int** push_row_front(int** arr, int& rows, const int cols);
+
+int** pop_row_back(int** arr, int& rows);
+int** pop_row_front(int** arr, int& rows);
+int** erase_row(int** arr, int& rows, const int cols, const int index);
+
 int** insert_row(int** arr, int& rows, const int cols, const int index);
+void insert_col(int** arr, const int rows, int& cols, const int index);
+
 void push_col_back(int** arr, const int rows, int& cols);
+void push_col_front(int** arr, const int rows, int& cols);
+
+void pop_col_back(int** arr, const int rows, int& cols);
+void pop_col_front(int** arr, const int rows, int& cols);
+void erase_cols(int** arr, const int rows, int& cols, const int index);
+
 
 int* InsertElement(int* arr, int* size, int index, int element);
 int* EraseElement(int* arr, int* size, int index);
 
-// #define DYNAMIC_MEMORY_1
+ //#define DYNAMIC_MEMORY_1
 #define DYNAMIC_MEMORY_2
 
 void main() {
@@ -96,7 +110,9 @@ void main() {
 
 	delete[] arr;
 
-#endif DYNAMIC_MEMORY_2
+#endif DYNAMIC_MEMORY_1
+
+#ifdef DYNAMIC_MEMORY_2
 
 	int rows;
 	int cols;
@@ -116,16 +132,51 @@ void main() {
 	FillRand(arr[rows - 1], cols, 100, 1000);
 	Print(arr, rows, cols);
 
+	arr = push_row_front(arr, rows, cols);
+	FillRand(arr[0], cols, 100, 1000);
+	Print(arr, rows, cols);
+
 	push_col_back(arr, rows, cols);
 	for (int i = 0; i < rows; i++) arr[i][cols - 1] = rand() % 1000;
 	Print(arr, rows, cols);
 
+	push_col_front(arr, rows, cols);
+	for (int i = 0; i < rows; i++) arr[i][0] = rand() % 1000;
+	Print(arr, rows, cols);
+
+	arr = pop_row_back(arr, rows);
+	Print(arr, rows, cols);
+
+	arr = pop_row_front(arr, rows);
+	Print(arr, rows, cols);
+
 	int index;
-	cout << "Введите индекс добавляемого значения: "; cin >> index;
+	cout << "Введите индекс добавляемой строки: "; cin >> index;
 	arr = insert_row(arr, rows, cols, index);
 	Print(arr, rows, cols);
 
+	cout << "Введите индекс добавляемого столбца: "; cin >> index;
+	insert_col(arr, rows, cols, index);
+	Print(arr, rows, cols);
+
+	cout << "Введите индекс удаляемой строки: "; cin >> index;
+	arr = erase_row(arr, rows, cols, index);
+	Print(arr, rows, cols);
+	
+
+	pop_col_back(arr, rows, cols);
+	Print(arr, rows, cols);
+
+	pop_col_front(arr, rows, cols);
+	Print(arr, rows, cols);
+
+	cout << "Введите индекс удаляемого столбца: "; cin >> index;
+	erase_cols(arr, rows, cols, index);
+	Print(arr, rows, cols);
+	
 	Clear(arr, rows, cols);
+
+#endif DYNAMIC_MEMORY_2
 	
 }
 
@@ -278,6 +329,61 @@ int** push_row_back(int** arr, int& rows, const int cols) {
 	return buffer;
 }
 
+int** push_row_front(int** arr, int& rows, const int cols) {
+	// 1) создаем буферный массив указателей нужного размера:
+	int** buffer = new int* [rows + 1];
+
+	// 2) Копируем адреса строк в новый массив:
+	for (int i = 0; i < rows; i++) {
+		buffer[i + 1] = arr[i];
+	}
+	// удаляем исходный массив указателей
+	delete[] arr;
+
+	// 4) Добавляем добавляемую строку:
+	buffer[0] = new int[cols] {};
+
+	// 5) После добавления строки, количество строк увеличивается на 1:
+	rows++;
+
+	// 6) Возвращаем новый массив
+	return buffer;
+}
+
+int** pop_row_back(int** arr, int& rows) {
+	int** buffer = new int* [--rows];
+	for (int i = 0; i < rows; i++)buffer[i] = arr[i];
+	delete[] arr;
+	return buffer;
+}
+
+int** pop_row_front(int** arr, int& rows) {
+	int** buffer = new int* [--rows];
+	for (int i = 0; i < rows; i++)buffer[i] = arr[i + 1];
+	delete[] arr;
+	return buffer;
+}
+
+int** erase_row(int** arr, int& rows, const int cols, const int index) {
+	int** buffer = new int* [rows - 1];
+	if (index < 0 || index > rows) {
+		cout << "Error: Out of range exception" << endl;
+		return arr;
+	}
+
+	for (int i = 0; i < rows; i++) {
+		/*
+		if (i < index)buffer[i] = arr[i];
+		else buffer[i] = arr[i + 1];
+		*/
+		buffer[i] = arr[i < index ? i : i + 1];
+	}
+	delete[] arr;
+	//buffer[index] = new int[cols] {};
+	rows--;
+	return buffer;
+}
+
 int** insert_row(int** arr, int& rows, const int cols, const int index)
 {
 	int** buffer = new int* [rows + 1] {};
@@ -309,6 +415,28 @@ int** insert_row(int** arr, int& rows, const int cols, const int index)
 	return buffer;
 }
 
+void insert_col(int** arr, const int rows, int& cols, const int index) {
+	if (index < 0 || index > cols) {
+		cout << "Error: Out of range exception" << endl;
+	}
+
+	for (int i = 0; i < rows; i++) {
+
+		// 1) Создаем буферную строку нужного размера:
+		int* buffer = new int[cols + 1] {};
+
+		// 2) копируем элементы из исходной строки в буферную:
+		for (int j = 0; j < cols; j++) buffer[j < index ? j : j + 1] = arr[i][j];
+
+		// 3) Удаляем исходную строку:
+		delete[] arr[i];
+
+		// 4) Подменяем адрес исходной строки адресом новой строки:
+		arr[i] = buffer;
+	}
+	cols++;
+}
+
 void push_col_back(int** arr, const int rows, int& cols) {
 	for (int i = 0; i < rows; i++) {
 
@@ -325,6 +453,85 @@ void push_col_back(int** arr, const int rows, int& cols) {
 		arr[i] = buffer;
 	}
 	cols++;
+}
+
+void push_col_front(int** arr, const int rows, int& cols) {
+	for (int i = 0; i < rows; i++) {
+
+		// 1) Создаем буферную строку нужного размера:
+		int* buffer = new int[cols + 1] {};
+
+		// 2) копируем элементы из исходной строки в буферную:
+		for (int j = 0; j < cols + 1; j++) buffer[j + 1] = arr[i][j];
+
+		// 3) Удаляем исходную строку:
+		delete[] arr[i];
+
+		// 4) Подменяем адрес исходной строки адресом новой строки:
+		arr[i] = buffer;
+	}
+	cols++;
+}
+
+void pop_col_back(int** arr, const int rows, int& cols) {
+
+	for (int i = 0; i < rows; i++) {
+
+		// 1) Создаем буферную строку нужного размера:
+		int* buffer = new int[cols - 1] {};
+
+		// 2) копируем элементы из исходной строки в буферную:
+		for (int j = 0; j < cols - 1; j++) buffer[j] = arr[i][j];
+
+		// 3) Удаляем исходную строку:
+		delete[] arr[i];
+
+		// 4) Подменяем адрес исходной строки адресом новой строки:
+		arr[i] = buffer;
+	}
+	cols--;
+}
+
+void pop_col_front(int** arr, const int rows, int& cols) {
+	for (int i = 0; i < rows; i++) {
+
+		// 1) Создаем буферную строку нужного размера:
+		int* buffer = new int[cols - 1] {};
+
+		// 2) копируем элементы из исходной строки в буферную:
+		for (int j = 0; j < cols - 1; j++) buffer[j] = arr[i][j + 1];
+
+		// 3) Удаляем исходную строку:
+		delete[] arr[i];
+
+		// 4) Подменяем адрес исходной строки адресом новой строки:
+		arr[i] = buffer;
+	}
+	cols--;
+}
+
+void erase_cols(int** arr, const int rows, int& cols, const int index) {
+	if (index < 0 || index > cols) {
+		cout << "Error: Out of range exception" << endl;
+	}
+
+	for (int i = 0; i < rows; i++) {
+
+		// 1) Создаем буферную строку нужного размера:
+		int* buffer = new int[cols - 1] {};
+
+		// 2) копируем элементы из исходной строки в буферную:
+		for (int j = 0; j < cols - 1; j++) buffer[j] = arr[i][j < index ? j : j + 1];
+			
+			//buffer[j] = arr[i][j + 1];
+
+			// 3) Удаляем исходную строку:
+			delete[] arr[i];
+
+			// 4) Подменяем адрес исходной строки адресом новой строки:
+			arr[i] = buffer;
+		}
+		cols--;
 }
 
 int* InsertElement(int* arr, int* size, int index, int element) {
