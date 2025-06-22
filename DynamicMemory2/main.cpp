@@ -39,19 +39,16 @@ void pop_col_back(int** arr, const int rows, int& cols);
 void pop_col_front(int** arr, const int rows, int& cols);
 void erase_cols(int** arr, const int rows, int& cols, const int index);
 
+int* insert(int arr[], int& n, const int value, const int index);
+int* erase(int arr[], int& n, const int index);
 
-int* InsertElement(int* arr, int* size, int index, int element);
-int* EraseElement(int* arr, int* size, int index);
-
- //#define DYNAMIC_MEMORY_1
-#define DYNAMIC_MEMORY_2
+#define DYNAMIC_MEMORY_1
+//#define DYNAMIC_MEMORY_2
 
 void main() {
 	setlocale(LC_ALL, "");
 
 #ifdef DYNAMIC_MEMORY_1
-
-
 
 	int n;
 	cout << "Введите размер массива: "; cin >> n;
@@ -77,35 +74,14 @@ void main() {
 	arr = pop_front(arr, n);
 	Print(arr, n);
 
-
-	cout << endl << endl << "Функция вставки элемента по указанному индексу" << endl;
-	cout << "----------------" << endl;
-	int element;
 	int index;
-
-	cout << endl << "Введите значение элемента, который необходимо добавить в массив" << endl;
-	cin >> element;
-	cout << endl << "Введите значение индекса, по которому необходимо добавить элемент в массив" << endl;
-	cin >> index;
-
-	while (index > n - 1) {
-		cout << "Значение индекса НЕ должно быть больше: " << n - 1 << ".  Введите значение индекса, по которому необходимо добавить элемент в массив" << endl;
-		cin >> index;
-	}
-	arr = InsertElement(arr, &n, index, element);
-	cout << endl << "Новый массив:" << endl;
+	cout << "Введите добавляемое значение: "; cin >> value;
+	cout << "Введите значение индекса, по которому необходимо добавить элемент в массив: "; cin >> index;
+	arr = insert(arr, n, value, index);
 	Print(arr, n);
-
-	cout << endl << endl << "Функция удаления элемента по указанному индексу" << endl;
-	cout << "----------------" << endl;
-	cout << endl << "Введите значение индекса, по которому необходимо удалить элемент из массива" << endl;
-	cin >> index;
-	while (index > n - 1) {
-		cout << "Значение индекса НЕ должно быть больше: " << n - 1 << ".  Введите значение индекса, по которому необходимо добавить элемент в массив" << endl;
-		cin >> index;
-	}
-	arr = EraseElement(arr, &n, index);
-	cout << endl << "Новый массив:" << endl;
+	
+	cout << "Введите значение индекса, по которому необходимо удалить элемент из массива: "; cin >> index;
+	arr = erase(arr, n, index);
 	Print(arr, n);
 
 	delete[] arr;
@@ -534,30 +510,33 @@ void erase_cols(int** arr, const int rows, int& cols, const int index) {
 		cols--;
 }
 
-int* InsertElement(int* arr, int* size, int index, int element) {
+int* insert(int arr[], int& n, const int value, const int index) {
+	if (index < 0 || index > n) {
+		cout << "Error: Out of range exception" << endl;
+	}
+	
+	// 1) Создаем буферный массив нужного размера:
+	int* buffer = new int[n + 1];
 
-	int new_size = *size + 1;
-	int* temp = new int[new_size];
-	for (int i = 0; i < index; i++) {
-		*(temp + i) = *(arr + i);
-	}
-	*(temp + index) = element;
-	for (int i = index + 1, j = index; i < new_size; i++, j++) {
-		*(temp + i) = *(arr + j);
-	}
-	*size = new_size;
-	return temp;
+	// 2) Копируем все элементы из исходного массива в буферный:
+	for (int i = 0; i < n; i++) buffer[i < index ? i : i + 1] = arr[i];
+
+	// 3) Удаляем исходный массив:
+	delete[] arr;
+
+	// 4) 
+	buffer[index] = value;
+
+	// 5) 
+	n++;
+	return buffer;
 }
 
-int* EraseElement(int* arr, int* size, int index) {
-	int new_size = *size - 1;
-	int* temp = new int[new_size];
-	for (int i = 0, j = 0; i < *size; i++) {
-		if (i == index) continue;
-		*(temp + j) = *(arr + i);
-		j++;
-	}
-	*size = new_size;
-	return temp;
+int* erase(int arr[], int& n, const int index) {
+	if (index < 0 || index > n) cout << "Error: Out of range exception" << endl;
+	int* buffer = new int[n - 1];
+	for (int i = 0; i < n - 1; i++) buffer[i] = arr[i < index ? i : i + 1];
+	delete[] arr;
+	n--;
+	return buffer;
 }
-
