@@ -26,12 +26,23 @@ template <typename T>T* pop_back(T arr[], int& n);
 template <typename T>T* pop_front(T arr[], int& n);
 
 template <typename T>T** push_row_back(T** arr, int& rows, const int cols);
+template <typename T>T** push_row_front(T** arr, int& rows, const int cols);
+
+template <typename T>T** pop_row_back(T** arr, int& rows);
+template <typename T>T** pop_row_front(T** arr, int& rows);
+template <typename T>T** erase_row(T** arr, int& rows, const int cols, const int index);
+
 template <typename T>T** insert_row(T** arr, int& rows, const int cols, const int index);
+
 template <typename T>void push_col_back(T** arr, const int rows, int& cols);
+template <typename T>void push_col_front(T** arr, const int rows, int& cols);
+template <typename T>void insert_col(T** arr, const int rows, int& cols, const int index);
 
-int* InsertElement(int* arr, int* size, int index, int element);
-int* EraseElement(int* arr, int* size, int index);
+template <typename T>void pop_col_back(T** arr, const int rows, int& cols);
+template <typename T>void pop_col_front(T** arr, const int rows, int& cols);
+template <typename T>void erase_cols(T** arr, const int rows, int& cols, const int index);
 
+template <typename T>T* erase(T arr[], int& n, const int index);
 
 
 //#define DYNAMIC_MEMORY_1
@@ -46,6 +57,8 @@ void main() {
 #ifdef DYNAMIC_MEMORY_1
 
 	int n;
+
+
 	cout << "Введите размер массива: "; cin >> n;
 	DataType* arr = new DataType[n]; // объявление динамического массива
 
@@ -72,44 +85,17 @@ void main() {
 	*/
 	Print(arr = insert(arr, n, value, index), n);
 	
-
 	arr = pop_back(arr, n);
 	Print(arr, n);
 
 	arr = pop_front(arr, n);
 	Print(arr, n);
 
-	/*
-	cout << endl << endl << "Функция вставки элемента по указанному индексу" << endl;
-	cout << "----------------" << endl;
-	int element;
-	//int index;
+	cout << endl << "Введите индекс удаляемого элемента: " << endl; cin >> index;
 
-	cout << endl << "Введите значение элемента, который необходимо добавить в массив" << endl;
-	cin >> element;
-	//cout << endl << "Введите значение индекса, по которому необходимо добавить элемент в массив" << endl;
-	//cin >> index;
+	Print(arr = erase(arr, n, index), n);
 
-	while (index > n - 1) {
-		cout << "Значение индекса НЕ должно быть больше: " << n - 1 << ".  Введите значение индекса, по которому необходимо добавить элемент в массив" << endl;
-		cin >> index;
-	}
-	arr = InsertElement(arr, &n, index, element);
-	cout << endl << "Новый массив:" << endl;
-	Print(arr, n);
 
-	cout << endl << endl << "Функция удаления элемента по указанному индексу" << endl;
-	cout << "----------------" << endl;
-	cout << endl << "Введите значение индекса, по которому необходимо удалить элемент из массива" << endl;
-	cin >> index;
-	while (index > n - 1) {
-		cout << "Значение индекса НЕ должно быть больше: " << n - 1 << ".  Введите значение индекса, по которому необходимо добавить элемент в массив" << endl;
-		cin >> index;
-	}
-	arr = EraseElement(arr, &n, index);
-	cout << endl << "Новый массив:" << endl;
-	Print(arr, n);
-	*/
 
 	delete[] arr;
 
@@ -119,6 +105,7 @@ void main() {
 
 	int rows;
 	int cols;
+	int index;
 
 	cout << "ВВедите количество строк: "; cin >> rows;
 	cout << "ВВедите количество элементов строки: "; cin >> cols;
@@ -135,13 +122,44 @@ void main() {
 	FillRand(arr[rows - 1], cols, 100, 1000);
 	Print(arr, rows, cols);
 
-	push_col_back(arr, rows, cols);
-	for (int i = 0; i < rows; i++) arr[i][cols - 1] = rand() % 1000;
+	arr = push_row_front(arr, rows, cols);
+	FillRand(arr[0], cols, 100, 1000);
 	Print(arr, rows, cols);
 
-	int index;
-	cout << "Введите индекс добавляемого значения: "; cin >> index;
+	cout << "Введите индекс добавляемой строки: "; cin >> index;
 	arr = insert_row(arr, rows, cols, index);
+	Print(arr, rows, cols);
+
+	push_col_back(arr, rows, cols);
+	for (int i = 0; i < rows; i++) arr[i][cols - 1] = double(rand() % (1000*100 - 100*100) + 100*100) / 100;
+	Print(arr, rows, cols);
+	
+	push_col_front(arr, rows, cols);
+	for (int i = 0; i < rows; i++) arr[i][0] = double(rand() % (1000*100 - 100*100) + 100*100) / 100;
+	Print(arr, rows, cols);
+
+	cout << "Введите индекс добавляемого столбца: "; cin >> index;
+	insert_col(arr, rows, cols, index);
+	Print(arr, rows, cols);
+
+	arr = pop_row_back(arr, rows);
+	Print(arr, rows, cols);
+
+	arr = pop_row_front(arr, rows);
+	Print(arr, rows, cols);
+	
+	cout << "Введите индекс удаляемой строки: "; cin >> index;
+	arr = erase_row(arr, rows, cols, index);
+	Print(arr, rows, cols);
+
+	pop_col_back(arr, rows, cols);
+	Print(arr, rows, cols);
+
+	pop_col_front(arr, rows, cols);
+	Print(arr, rows, cols);
+
+	cout << "Введите индекс удаляемого столбца: "; cin >> index;
+	erase_cols(arr, rows, cols, index);
 	Print(arr, rows, cols);
 
 	Clear(arr, rows, cols);
@@ -325,6 +343,53 @@ template<typename T> T** push_row_back(T** arr, int& rows, const int cols) {
 	return buffer;
 }
 
+template<typename T> T** push_row_front(T** arr, int& rows, const int cols) {
+	// 1) создаем буферный массив указателей нужного размера:
+	T** buffer = new T* [rows + 1];
+
+	// 2) Копируем адреса строк в новый массив:
+	for (int i = 0; i < rows; i++) {
+		buffer[i + 1] = arr[i];
+	}
+	// удаляем исходный массив указателей
+	delete[] arr;
+
+	// 4) Добавляем добавляемую строку:
+	buffer[0] = new T[cols] {};
+
+	// 5) После добавления строки, количество строк увеличивается на 1:
+	rows++;
+
+	// 6) Возвращаем новый массив
+	return buffer;
+}
+
+template<typename T> T** pop_row_back(T** arr, int& rows) {
+	T** buffer = new T* [--rows];
+	for (int i = 0; i < rows; i++)buffer[i] = arr[i];
+	delete[] arr;
+	return buffer;
+}
+
+template<typename T> T** pop_row_front(T** arr, int& rows) {
+	T** buffer = new T* [--rows];
+	for (int i = 0; i < rows; i++)buffer[i] = arr[i + 1];
+	delete[] arr;
+	return buffer;
+}
+
+template<typename T> T** erase_row(T** arr, int& rows, const int cols, const int index) {
+	T** buffer = new T* [rows - 1];
+	if (index < 0 || index > rows) {
+		cout << "Error: Out of range exception" << endl;
+		return arr;
+	}
+	for (int i = 0; i < rows; i++) buffer[i] = arr[i < index ? i : i + 1];
+	delete[] arr;
+	rows--;
+	return buffer;
+}
+
 template<typename T> T** insert_row(T** arr, int& rows, const int cols, const int index) {
 	T** buffer = new T* [rows + 1] {};
 	if (index < 0 || index > rows) {
@@ -373,30 +438,111 @@ template<typename T>void push_col_back(T** arr, const int rows, int& cols) {
 	cols++;
 }
 
-int* InsertElement(int* arr, int* size, int index, int element) {
+template<typename T> void push_col_front(T** arr, const int rows, int& cols) {
+	for (int i = 0; i < rows; i++) {
 
-	int new_size = *size + 1;
-	int* temp = new int[new_size];
-	for (int i = 0; i < index; i++) {
-		*(temp + i) = *(arr + i);
+		// 1) Создаем буферную строку нужного размера:
+		T* buffer = new T[cols + 1] {};
+
+		// 2) копируем элементы из исходной строки в буферную:
+		for (int j = 0; j < cols + 1; j++) buffer[j + 1] = arr[i][j];
+
+		// 3) Удаляем исходную строку:
+		delete[] arr[i];
+
+		// 4) Подменяем адрес исходной строки адресом новой строки:
+		arr[i] = buffer;
 	}
-	*(temp + index) = element;
-	for (int i = index + 1, j = index; i < new_size; i++, j++) {
-		*(temp + i) = *(arr + j);
-	}
-	*size = new_size;
-	return temp;
+	cols++;
 }
 
-int* EraseElement(int* arr, int* size, int index) {
-	int new_size = *size - 1;
-	int* temp = new int[new_size];
-	for (int i = 0, j = 0; i < *size; i++) {
-		if (i == index) continue;
-		*(temp + j) = *(arr + i);
-		j++;
+template<typename T> void insert_col(T** arr, const int rows, int& cols, const int index) {
+	if (index < 0 || index > cols) {
+		cout << "Error: Out of range exception" << endl;
 	}
-	*size = new_size;
-	return temp;
+	for (int i = 0; i < rows; i++) {
+
+		// 1) Создаем буферную строку нужного размера:
+		T* buffer = new T[cols + 1] {};
+
+		// 2) копируем элементы из исходной строки в буферную:
+		for (int j = 0; j < cols; j++) buffer[j < index ? j : j + 1] = arr[i][j];
+
+		// 3) Удаляем исходную строку:
+		delete[] arr[i];
+
+		// 4) Подменяем адрес исходной строки адресом новой строки:
+		arr[i] = buffer;
+	}
+	cols++;
+}
+
+template<typename T> void pop_col_back(T** arr, const int rows, int& cols) {
+	for (int i = 0; i < rows; i++) {
+
+		// 1) Создаем буферную строку нужного размера:
+		T* buffer = new T[cols - 1] {};
+
+		// 2) копируем элементы из исходной строки в буферную:
+		for (int j = 0; j < cols - 1; j++) buffer[j] = arr[i][j];
+
+		// 3) Удаляем исходную строку:
+		delete[] arr[i];
+
+		// 4) Подменяем адрес исходной строки адресом новой строки:
+		arr[i] = buffer;
+	}
+	cols--;
+}
+
+template<typename T> void pop_col_front(T** arr, const int rows, int& cols) {
+	for (int i = 0; i < rows; i++) {
+
+		// 1) Создаем буферную строку нужного размера:
+		T* buffer = new T[cols - 1] {};
+
+		// 2) копируем элементы из исходной строки в буферную:
+		for (int j = 0; j < cols - 1; j++) buffer[j] = arr[i][j + 1];
+
+		// 3) Удаляем исходную строку:
+		delete[] arr[i];
+
+		// 4) Подменяем адрес исходной строки адресом новой строки:
+		arr[i] = buffer;
+	}
+	cols--;
+}
+
+template<typename T> void erase_cols(T** arr, const int rows, int& cols, const int index) {
+	if (index < 0 || index > cols) {
+		cout << "Error: Out of range exception" << endl;
+	}
+	for (int i = 0; i < rows; i++) {
+
+		// 1) Создаем буферную строку нужного размера:
+		T* buffer = new T[cols - 1] {};
+
+		// 2) копируем элементы из исходной строки в буферную:
+		for (int j = 0; j < cols - 1; j++) buffer[j] = arr[i][j < index ? j : j + 1];
+
+		//buffer[j] = arr[i][j + 1];
+
+		// 3) Удаляем исходную строку:
+		delete[] arr[i];
+
+		// 4) Подменяем адрес исходной строки адресом новой строки:
+		arr[i] = buffer;
+	}
+	cols--;
+}
+
+
+template <typename T> T* erase(T arr[], int& n, const int index) {
+	if (index < 0 || index > n) cout << "Error: Out of range exception" << endl;
+	T* buffer = new T[n - 1];
+	for (int i = 0; i < n - 1; i++) buffer[i] = arr[i < index ? i : i + 1];
+	delete[] arr;
+	n--;
+	return buffer;
 }
 
